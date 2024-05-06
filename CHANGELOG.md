@@ -1,3 +1,7 @@
+#### 2.2.1 (2022-11-24)
+
+* Update http version.
+
 #### 2.2.0 (2022-11-24)
 
 * Update path-drawing version.

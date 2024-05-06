@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'package:svgaplayer_flutter/proto/svga.pb.dart';
+// import 'package:svgaplayer_flutter/proto/svga.pb.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'proto/svga.pbserver.dart';
 import 'dart:typed_data';
