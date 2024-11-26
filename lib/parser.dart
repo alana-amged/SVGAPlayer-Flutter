@@ -84,38 +84,44 @@ class SVGAParser {
     })).then((_) => movieItem);
   }
 
-  Future<ui.Image?> _decodeImageItem(String key, Uint8List bytes,
-      {TimelineTask? timeline}) async {
-    TimelineTask? task;
-    if (!kReleaseMode) {
-      task = TimelineTask(filterKey: _filterKey, parent: timeline)
-        ..start('DecodeImage', arguments: {'key': key, 'length': bytes.length});
-    }
-    try {
-      final image = await decodeImageFromList(bytes);
-      if (task != null) {
-        task.finish(
-          arguments: {'imageSize': '${image.width}x${image.height}'},
-        );
-      }
-      return image;
-    } catch (e, stack) {
-      if (task != null) {
-        task.finish(arguments: {'error': '$e', 'stack': '$stack'});
-      }
-      assert(() {
-        FlutterError.reportError(FlutterErrorDetails(
-          exception: e,
-          stack: stack,
-          library: 'svgaplayer',
-          context: ErrorDescription('during prepare resource'),
-          informationCollector: () sync* {
-            yield ErrorSummary('Decoding image failed.');
-          },
-        ));
-        return true;
-      }());
-      return null;
-    }
+ Future<ui.Image?> _decodeImageItem(String key, Uint8List bytes,
+    {TimelineTask? timeline}) async {
+  TimelineTask? task;
+  if (!kReleaseMode) {
+    task = TimelineTask(filterKey: _filterKey, parent: timeline)
+      ..start('DecodeImage', arguments: {'key': key, 'length': bytes.length});
   }
+  try {
+    // Add a check for valid image data.
+    if (bytes.isEmpty) {
+      throw Exception('Image data is empty.');
+    }
+
+    final image = await decodeImageFromList(bytes);
+    if (task != null) {
+      task.finish(
+        arguments: {'imageSize': '${image.width}x${image.height}'},
+      );
+    }
+    return image;
+  } catch (e, stack) {
+    if (task != null) {
+      task.finish(arguments: {'error': '$e', 'stack': '$stack'});
+    }
+    assert(() {
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: e,
+        stack: stack,
+        library: 'svgaplayer',
+        context: ErrorDescription('during prepare resource'),
+        informationCollector: () sync* {
+          yield ErrorSummary('Decoding image failed.');
+        },
+      ));
+      return true;
+    }());
+    return null;
+  }
+}
+
 }
